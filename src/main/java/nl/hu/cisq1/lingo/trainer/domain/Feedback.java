@@ -32,6 +32,14 @@ public class Feedback {
 //        return hint;
 //    }
 
+    public List<Mark> getMarks() {
+        return marks;
+    }
+
+    public String getAttempt(){
+        return attempt;
+    }
+
     public List<Character> giveHint(List<Character> previousHint, String wordToGuess){
         if (marks.stream().allMatch(i -> i == Mark.INVALID)){
             return previousHint;

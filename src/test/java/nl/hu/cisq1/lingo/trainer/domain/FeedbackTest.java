@@ -48,6 +48,6 @@ class FeedbackTest {
         List<Character> hint = feedback.giveHint(previousHint, wordToGuess);
         assertEquals(newHint, hint);
     }
-    
+
 
 }
