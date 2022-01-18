@@ -26,7 +26,7 @@ class RoundTest {
     void correctHintIsGiven(String wordToGuess, List<String> wordGuesses, List<Character> hint){
         Round round = new Round(wordToGuess);
         for (String guess : wordGuesses){
-            round.guessWord(guess);
+            round.giveFeedback(guess);
         }
         assertEquals(hint, round.giveHint());
     }
@@ -43,15 +43,15 @@ class RoundTest {
     void incorrectHintIsGiven(String wordToGuess, List<String> wordGuesses, List<Character> hint){
         Round round = new Round(wordToGuess);
         for (String guess : wordGuesses){
-            round.guessWord(guess);
+            round.giveFeedback(guess);
         }
         assertNotEquals(hint, round.giveHint());
     }
 
-
-
-
-
-
-
+    @Test
+    @DisplayName("hint with first letter is given on first attempt")
+    void hintWithFirstLetterIsGiven(){
+        Round round = new Round("banana");
+        assertEquals(Arrays.asList('b', null, null, null, null, null), round.giveHint());
+    }
 }
