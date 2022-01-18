@@ -18,24 +18,28 @@ public class Round {
 
     public void guessWord(String guessAttempt){
         attempts++;
-        List<Mark> marks = new ArrayList<>();
-        if(guessAttempt.length() == wordToGuess.length()){
-            for (int i = 0; i < wordToGuess.length(); i++){
-                if(guessAttempt.charAt(i) == wordToGuess.charAt(i)){
-                    marks.add(i, Mark.CORRECT);
-                } else if (wordToGuess.indexOf(guessAttempt.charAt(i)) != -1) {
-                    marks.add(i, Mark.PRESENT);
-                } else {
-                    marks.add(i, Mark.ABSENT);
-                }
-            }
-
-        } else {
-            marks.addAll(Collections.nCopies(guessAttempt.length(), Mark.INVALID));
-        }
-        Feedback feedback = new Feedback(guessAttempt, marks);
+        Feedback feedback = new Feedback(guessAttempt);
+        feedback.markGuessAttempt(wordToGuess);
         feedbackHistory.add(feedback);
     }
+
+//    public Feedback getFeedback(String guessAttempt){
+//        List<Mark> marks = new ArrayList<>();
+//        if(guessAttempt.length() == wordToGuess.length()){
+//            for (int i = 0; i < wordToGuess.length(); i++){
+//                if(guessAttempt.charAt(i) == wordToGuess.charAt(i)){
+//                    marks.add(i, Mark.CORRECT);
+//                } else if (wordToGuess.indexOf(guessAttempt.charAt(i)) != -1) {
+//                    marks.add(i, Mark.PRESENT);
+//                } else {
+//                    marks.add(i, Mark.ABSENT);
+//                }
+//            }
+//        } else {
+//            marks.addAll(Collections.nCopies(guessAttempt.length(), Mark.INVALID));
+//        }
+//        return new Feedback(guessAttempt, marks);
+//    }
 
 
     public List<Character> giveHint(){

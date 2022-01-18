@@ -31,5 +31,27 @@ class RoundTest {
         assertEquals(hint, round.giveHint());
     }
 
+    static Stream<Arguments> provideIncorrectHintExamples() {
+        return Stream.of(
+                Arguments.of("straat", Arrays.asList("stoomt", "strook"), Arrays.asList('s', 't', 'r', 'a', null, 't'))
+        );
+    }
+
+    @ParameterizedTest
+    @MethodSource("provideIncorrectHintExamples")
+    @DisplayName("hint is not correct if marks are correctly used when generating a new hint")
+    void incorrectHintIsGiven(String wordToGuess, List<String> wordGuesses, List<Character> hint){
+        Round round = new Round(wordToGuess);
+        for (String guess : wordGuesses){
+            round.guessWord(guess);
+        }
+        assertNotEquals(hint, round.giveHint());
+    }
+
+
+
+
+
+
 
 }

@@ -19,7 +19,8 @@ class FeedbackTest {
     @Test
     @DisplayName("word is guessed if all letters are correct")
     void wordIsGuessed(){
-        Feedback feedback = new Feedback("woord", List.of(Mark.CORRECT, Mark.CORRECT, Mark.CORRECT, Mark.CORRECT, Mark.CORRECT));
+        Feedback feedback = new Feedback("woord");
+        feedback.markGuessAttempt("woord");
 
         assertTrue(feedback.isWordGuessed());
     }
@@ -27,27 +28,43 @@ class FeedbackTest {
     @Test
     @DisplayName("word is not guessed if not all letters are correct")
     void wordIsNotGuessed(){
-        Feedback feedback = new Feedback("woord", List.of(Mark.CORRECT, Mark.CORRECT, Mark.CORRECT, Mark.CORRECT, Mark.INVALID));
+        Feedback feedback = new Feedback("woord");
+        feedback.markGuessAttempt("banaan");
 
         assertFalse(feedback.isWordGuessed());
     }
 
-
-    static Stream<Arguments> provideHintExamples() {
+    static Stream<Arguments> provideGuessExamples() {
         return Stream.of(
-                Arguments.of("straat", new Feedback("stroom", List.of(Mark.CORRECT, Mark.CORRECT, Mark.CORRECT, Mark.ABSENT, Mark.ABSENT, Mark.ABSENT)), Arrays.asList('s', 't', '*', '*', '*'), Arrays.asList('s', 't', 'r', '*', '*')),
-                Arguments.of("straat", new Feedback("strak", List.of(Mark.INVALID, Mark.INVALID, Mark.INVALID, Mark.INVALID)), Arrays.asList('s', 't', '*', '*', '*'), Arrays.asList('s', 't', '*', '*', '*')),
-                Arguments.of("straat", new Feedback("stoorm", List.of(Mark.CORRECT, Mark.CORRECT, Mark.ABSENT, Mark.ABSENT, Mark.PRESENT, Mark.ABSENT)), Arrays.asList('s', 't', '*', '*', '*'), Arrays.asList('s', 't', '*', '*', '*'))
-                );
+                Arguments.of("straat", "stroom", Arrays.asList(Mark.CORRECT, Mark.CORRECT, Mark.CORRECT, Mark.ABSENT, Mark.ABSENT, Mark.ABSENT)),
+                Arguments.of("kelder", "lelijk", Arrays.asList(Mark.PRESENT, Mark.CORRECT, Mark.CORRECT, Mark.ABSENT, Mark.ABSENT, Mark.PRESENT)),
+                Arguments.of("banaan", "appel", Arrays.asList(Mark.INVALID, Mark.INVALID, Mark.INVALID, Mark.INVALID, Mark.INVALID))
+        );
     }
 
     @ParameterizedTest
-    @MethodSource("provideHintExamples")
-    @DisplayName("hint is correct if marks are correctly used when generating a new hint")
-    void correctHintIsGiven(String wordToGuess, Feedback feedback, List<Character> previousHint, List<Character> newHint){
-        List<Character> hint = feedback.giveHint(previousHint, wordToGuess);
-        assertEquals(newHint, hint);
+    @MethodSource("provideGuessExamples")
+    @DisplayName("Feedback is correctly marked when each letter is correctly marked")
+    void guessAttemptIsCorrectlyMarked(String wordToGuess, String guessAttempt, List<Mark> marks){
+        Feedback feedback = new Feedback(guessAttempt);
+        feedback.markGuessAttempt(wordToGuess);
+        assertEquals(marks, feedback.getMarks());
     }
 
+    static Stream<Arguments> provideIncorrectGuessExamples() {
+        return Stream.of(
+                Arguments.of("straat", "stroom", Arrays.asList(Mark.CORRECT, Mark.CORRECT, Mark.PRESENT, Mark.ABSENT, Mark.ABSENT, Mark.ABSENT)),
+                Arguments.of("kelder", "lelijk", Arrays.asList(Mark.PRESENT, Mark.CORRECT, Mark.CORRECT, Mark.ABSENT, Mark.ABSENT, Mark.ABSENT)),
+                Arguments.of("banaan", "appel", Arrays.asList(Mark.PRESENT, Mark.ABSENT, Mark.ABSENT, Mark.ABSENT, Mark.ABSENT))
+        );
+    }
 
+    @ParameterizedTest
+    @MethodSource("provideIncorrectGuessExamples")
+    @DisplayName("Feedback is incorrectly marked when not all letters are correctly marked")
+    void guessAttemptIsInCorrectlyMarked(String wordToGuess, String guessAttempt, List<Mark> marks){
+        Feedback feedback = new Feedback(guessAttempt);
+        feedback.markGuessAttempt(wordToGuess);
+        assertNotEquals(marks, feedback.getMarks());
+    }
 }
