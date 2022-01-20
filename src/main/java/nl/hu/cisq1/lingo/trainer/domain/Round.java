@@ -1,13 +1,28 @@
 package nl.hu.cisq1.lingo.trainer.domain;
 
+import org.hibernate.annotations.Cascade;
+
+import javax.persistence.*;
 import java.util.ArrayList;
 import java.util.Arrays;
+import java.util.Collections;
 import java.util.List;
 
+@Entity
 public class Round {
     private String wordToGuess;
+
     private int attempts;
+
+    @OneToMany
+    @Cascade(org.hibernate.annotations.CascadeType.ALL)
+    @JoinColumn
+    @OrderBy(value = "id DESC")
     private List<Feedback> feedbackHistory;
+
+    @Id
+    @GeneratedValue(strategy = GenerationType.SEQUENCE)
+    private Long id;
 
     public Round(String wordToGuess) {
         this.wordToGuess = wordToGuess;
@@ -15,15 +30,19 @@ public class Round {
         this.attempts = 0;
     }
 
-    public void giveFeedback(String guessAttempt){
+    public Round() {
+    }
+
+    public Feedback giveFeedback(String guessAttempt){
         attempts++;
         Feedback feedback = new Feedback(guessAttempt);
         feedback.markGuessAttempt(wordToGuess);
         feedbackHistory.add(feedback);
+        return feedback;
     }
 
     public List<Character> giveHint(){
-        List<Character> hint = Arrays.asList(new Character[wordToGuess.length()]);
+        List<Character> hint = new ArrayList<>(Collections.nCopies(wordToGuess.length(), '.'));
 
         if(feedbackHistory.isEmpty()){
             hint.set(0, wordToGuess.charAt(0));
@@ -39,11 +58,27 @@ public class Round {
         return hint;
     }
 
+    public List<Feedback> getFeedbackHistory() {
+        return feedbackHistory;
+    }
+
+    public boolean isWordGuessed(){
+        return feedbackHistory.get(feedbackHistory.size()-1).isWordGuessed();
+    }
+
     public String getWordToGuess() {
         return wordToGuess;
     }
 
     public int getAttempts() {
         return attempts;
+    }
+
+    public void setId(Long id) {
+        this.id = id;
+    }
+
+    public Long getId() {
+        return id;
     }
 }

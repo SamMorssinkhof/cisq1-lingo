@@ -16,7 +16,7 @@ class RoundTest {
 
     static Stream<Arguments> provideHintExamples() {
         return Stream.of(
-                Arguments.of("straat", Arrays.asList("stoomt", "strook"), Arrays.asList('s', 't', 'r', null, null, 't'))
+                Arguments.of("straat", Arrays.asList("stoomt", "strook"), Arrays.asList('s', 't', 'r', '.', '.', 't'))
         );
     }
 
@@ -33,7 +33,7 @@ class RoundTest {
 
     static Stream<Arguments> provideIncorrectHintExamples() {
         return Stream.of(
-                Arguments.of("straat", Arrays.asList("stoomt", "strook"), Arrays.asList('s', 't', 'r', 'a', null, 't'))
+                Arguments.of("straat", Arrays.asList("stoomt", "strook"), Arrays.asList('s', 't', 'r', 'a', '.', 't'))
         );
     }
 
@@ -52,6 +52,6 @@ class RoundTest {
     @DisplayName("hint with first letter is given on first attempt")
     void hintWithFirstLetterIsGiven(){
         Round round = new Round("banana");
-        assertEquals(Arrays.asList('b', null, null, null, null, null), round.giveHint());
+        assertEquals(Arrays.asList('b', '.', '.', '.', '.', '.'), round.giveHint());
     }
 }

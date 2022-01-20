@@ -1,0 +1,60 @@
+package nl.hu.cisq1.lingo.trainer.application;
+
+import nl.hu.cisq1.lingo.trainer.data.SpringGameRepository;
+import nl.hu.cisq1.lingo.trainer.domain.Game;
+import nl.hu.cisq1.lingo.trainer.domain.GameProgress;
+import nl.hu.cisq1.lingo.trainer.domain.exceptions.CurrentRoundIsNotFinishedException;
+import nl.hu.cisq1.lingo.trainer.domain.exceptions.PlayerIsEliminatedException;
+import nl.hu.cisq1.lingo.words.application.WordService;
+import org.springframework.stereotype.Service;
+
+import javax.persistence.EntityNotFoundException;
+
+@Service
+public class TrainerService {
+
+    private WordService wordService;
+    private SpringGameRepository gameRepository;
+
+    public TrainerService(WordService wordService, SpringGameRepository gameRepository) {
+        this.wordService = wordService;
+        this.gameRepository = gameRepository;
+    }
+
+    public String getNewWord(Game game){
+        return wordService.provideRandomWord(game.provideNewWordLength());
+    }
+
+    public GameProgress startNewGame() throws PlayerIsEliminatedException, CurrentRoundIsNotFinishedException {
+        Game newGame = new Game();
+        newGame.startNewRound(getNewWord(newGame));
+        GameProgress gameProgress = newGame.showProgress();
+        Game game = gameRepository.save(newGame);
+
+        //Set game id as a separate function so GameRepository can be mocked
+        gameProgress.setGameId(game.getId());
+        return gameProgress;
+    }
+
+    public GameProgress guess(String guessAttempt, Long gameId) throws PlayerIsEliminatedException {
+        Game game = getGameById(gameId);
+        game.attemptWordGuess(guessAttempt);
+        gameRepository.save(game);
+        GameProgress gameProgress = game.showProgress();
+        gameProgress.setGameId(game.getId());
+        return gameProgress;
+    }
+
+    public GameProgress startNewRound(Long gameId) throws PlayerIsEliminatedException, CurrentRoundIsNotFinishedException {
+        Game game = getGameById(gameId);
+        game.startNewRound(getNewWord(game));
+        gameRepository.save(game);
+        GameProgress gameProgress = game.showProgress();
+        gameProgress.setGameId(game.getId());
+        return gameProgress;
+    }
+
+    public Game getGameById(Long gameId) throws EntityNotFoundException {
+        return gameRepository.findById(gameId).orElseThrow(() -> new EntityNotFoundException("No game found with id: " + gameId));
+    }
+}

@@ -1,10 +1,18 @@
 package nl.hu.cisq1.lingo.trainer.domain;
 
+import javax.persistence.*;
 import java.util.*;
 
+@Entity
 public class Feedback {
     private String attempt;
+
+    @ElementCollection
     private List<Mark> marks;
+
+    @Id
+    @GeneratedValue(strategy = GenerationType.SEQUENCE)
+    private  Long id;
 
     public Feedback(String attempt) {
         this.attempt = attempt;
@@ -15,12 +23,15 @@ public class Feedback {
         return marks.stream().allMatch(i -> i == Mark.CORRECT);
     }
 
-    public List<Mark> getMarks() {
-        return marks;
+    public Feedback() {
     }
 
-    public String getAttempt(){
+    public String getAttempt() {
         return attempt;
+    }
+
+    public List<Mark> getMarks() {
+        return marks;
     }
 
     public void markGuessAttempt(String wordToGuess) {
@@ -37,5 +48,13 @@ public class Feedback {
         } else {
             marks.addAll(Collections.nCopies(attempt.length(), Mark.INVALID));
         }
+    }
+
+    public void setId(Long id) {
+        this.id = id;
+    }
+
+    public Long getId() {
+        return id;
     }
 }
