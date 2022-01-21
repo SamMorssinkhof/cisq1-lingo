@@ -4,8 +4,6 @@ import nl.hu.cisq1.lingo.trainer.domain.exceptions.CurrentRoundIsNotFinishedExce
 import nl.hu.cisq1.lingo.trainer.domain.exceptions.PlayerIsEliminatedException;
 import org.hibernate.annotations.Cascade;
 import org.hibernate.annotations.CascadeType;
-import org.hibernate.annotations.Fetch;
-import org.hibernate.annotations.FetchMode;
 
 import javax.persistence.*;
 import java.util.ArrayList;

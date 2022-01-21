@@ -1,11 +1,8 @@
 package nl.hu.cisq1.lingo.trainer.domain;
 
 import org.hibernate.annotations.Cascade;
-import org.hibernate.annotations.ManyToAny;
-
 import javax.persistence.*;
 import java.util.ArrayList;
-import java.util.Arrays;
 import java.util.Collections;
 import java.util.List;
 

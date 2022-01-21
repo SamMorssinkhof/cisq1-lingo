@@ -4,14 +4,10 @@ import nl.hu.cisq1.lingo.trainer.data.SpringGameRepository;
 import nl.hu.cisq1.lingo.trainer.domain.Game;
 import nl.hu.cisq1.lingo.trainer.domain.GameProgress;
 import nl.hu.cisq1.lingo.trainer.domain.GameState;
-import nl.hu.cisq1.lingo.trainer.domain.exceptions.CurrentRoundIsNotFinishedException;
-import nl.hu.cisq1.lingo.trainer.domain.exceptions.PlayerIsEliminatedException;
 import nl.hu.cisq1.lingo.words.application.WordService;
-import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.DisplayName;
 import org.junit.jupiter.api.Test;
 
-import java.io.IOException;
 import java.util.List;
 import java.util.Optional;
 

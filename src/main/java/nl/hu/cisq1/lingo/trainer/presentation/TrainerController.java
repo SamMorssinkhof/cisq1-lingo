@@ -21,17 +21,17 @@ public class TrainerController {
     }
 
     @PostMapping("/game")
-    private GameProgress startNewGame() {
+    GameProgress startNewGame() {
         return trainerService.startNewGame();
     }
 
     @PostMapping("/game/{id}/round")
-    private GameProgress startNewRound(@PathVariable Long id) {
+    GameProgress startNewRound(@PathVariable Long id) {
         return trainerService.startNewRound(id);
     }
 
     @PostMapping("/game/{id}/guess")
-    private GameProgress guess(@PathVariable Long id, @RequestBody GuessDto guessDto) {
+    GameProgress guess(@PathVariable Long id, @RequestBody GuessDto guessDto) {
         return trainerService.guess(id, guessDto.guess);
     }
 }
