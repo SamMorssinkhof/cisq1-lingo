@@ -56,4 +56,31 @@ class TrainerServiceTest {
         assertEquals(GameState.WAITING_FOR_ROUND, gameProgress.getGameState());
         assertEquals(1, gameProgress.getFeedbackHistory().size());
     }
+
+    @Test
+    @DisplayName("start a new round")
+    void startNewRound(){
+        WordService wordService = mock(WordService.class);
+        when(wordService.provideRandomWord(5)).thenReturn("skunk");
+
+        SpringGameRepository gameRepository = mock(SpringGameRepository.class);
+
+        TrainerService trainerService = new TrainerService(wordService, gameRepository);
+
+        Game game = new Game();
+        game.startNewRound("skunk");
+
+        when(gameRepository.findById(any())).thenReturn(Optional.of(game));
+
+        when(gameRepository.save(any())).thenAnswer(i -> i.getArgument(0));
+
+        trainerService.guess(0L, "skunk");
+
+        when(wordService.provideRandomWord(6)).thenReturn("poopie");
+
+        GameProgress gameProgress = trainerService.startNewRound(0L);
+        assertEquals(GameState.PLAYING, gameProgress.getGameState());
+        assertEquals(0, gameProgress.getFeedbackHistory().size());
+        assertEquals(1, gameProgress.getScore());
+    }
 }
