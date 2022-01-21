@@ -52,7 +52,7 @@ class TrainerServiceTest {
 
         GameProgress gameProgress = trainerService.guess(0L, "skunk");
 
-        assertEquals(1, gameProgress.getScore());
+        assertEquals(4, gameProgress.getScore());
         assertEquals(GameState.WAITING_FOR_ROUND, gameProgress.getGameState());
         assertEquals(1, gameProgress.getFeedbackHistory().size());
     }
@@ -81,6 +81,6 @@ class TrainerServiceTest {
         GameProgress gameProgress = trainerService.startNewRound(0L);
         assertEquals(GameState.PLAYING, gameProgress.getGameState());
         assertEquals(0, gameProgress.getFeedbackHistory().size());
-        assertEquals(1, gameProgress.getScore());
+        assertEquals(4, gameProgress.getScore());
     }
 }

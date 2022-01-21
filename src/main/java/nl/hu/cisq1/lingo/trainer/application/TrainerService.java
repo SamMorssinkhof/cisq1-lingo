@@ -46,6 +46,10 @@ public class TrainerService {
         return game.showProgress();
     }
 
+    public GameProgress getGameProgress(Long gameId) {
+        return getGameById(gameId).showProgress();
+    }
+
     public Game getGameById(Long gameId) throws EntityNotFoundException {
         return gameRepository.findById(gameId).orElseThrow(() -> new EntityNotFoundException("No game found with id: " + gameId));
     }

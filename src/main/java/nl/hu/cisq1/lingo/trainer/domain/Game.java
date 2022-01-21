@@ -55,7 +55,7 @@ public class Game {
         getCurrentRound().giveFeedback(guessAttempt);
 
         if (getCurrentRound().isWordGuessed()) {
-            score += 1;
+            score += 5 - getCurrentRound().getAttempts();
             gameState = GameState.WAITING_FOR_ROUND;
         } else if (getCurrentRound().getAttempts() == 5) {
             gameState = GameState.ELIMINATED;

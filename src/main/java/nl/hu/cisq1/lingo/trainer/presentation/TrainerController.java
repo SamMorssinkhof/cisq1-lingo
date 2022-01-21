@@ -4,10 +4,7 @@ import nl.hu.cisq1.lingo.trainer.application.TrainerService;
 import nl.hu.cisq1.lingo.trainer.domain.GameProgress;
 import nl.hu.cisq1.lingo.trainer.domain.GuessDto;
 import org.springframework.stereotype.Controller;
-import org.springframework.web.bind.annotation.PathVariable;
-import org.springframework.web.bind.annotation.PostMapping;
-import org.springframework.web.bind.annotation.RequestBody;
-import org.springframework.web.bind.annotation.RequestMapping;
+import org.springframework.web.bind.annotation.*;
 
 @Controller
 @RequestMapping("trainer")
@@ -16,6 +13,10 @@ public class TrainerController {
 
     public TrainerController(TrainerService trainerService) {
         this.trainerService = trainerService;
+    }
+
+    @GetMapping("/game/{id}")
+    GameProgress getGameProgress(@PathVariable Long id) {return trainerService.getGameProgress(id);
     }
 
     @PostMapping("/game")
