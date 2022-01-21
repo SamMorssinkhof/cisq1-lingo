@@ -21,40 +21,38 @@ public class TrainerService {
         this.gameRepository = gameRepository;
     }
 
-    public String getNewWord(Game game){
-        return wordService.provideRandomWord(game.provideNewWordLength());
+    public GameProgress startNewGame() {
+        Game game = new Game();
+
+        game.startNewRound(getNewWord(game));
+        game = gameRepository.save(game);
+
+        return game.showProgress();
     }
 
-    public GameProgress startNewGame() throws PlayerIsEliminatedException, CurrentRoundIsNotFinishedException {
-        Game newGame = new Game();
-        newGame.startNewRound(getNewWord(newGame));
-        GameProgress gameProgress = newGame.showProgress();
-        Game game = gameRepository.save(newGame);
-
-        //Set game id as a separate function so GameRepository can be mocked
-        gameProgress.setGameId(game.getId());
-        return gameProgress;
-    }
-
-    public GameProgress guess(String guessAttempt, Long gameId) throws PlayerIsEliminatedException {
+    public GameProgress guess(Long gameId, String guessAttempt) {
         Game game = getGameById(gameId);
+
         game.attemptWordGuess(guessAttempt);
         gameRepository.save(game);
-        GameProgress gameProgress = game.showProgress();
-        gameProgress.setGameId(game.getId());
-        return gameProgress;
+
+        return  game.showProgress();
     }
 
-    public GameProgress startNewRound(Long gameId) throws PlayerIsEliminatedException, CurrentRoundIsNotFinishedException {
+    public GameProgress startNewRound(Long gameId) {
         Game game = getGameById(gameId);
+
         game.startNewRound(getNewWord(game));
         gameRepository.save(game);
-        GameProgress gameProgress = game.showProgress();
-        gameProgress.setGameId(game.getId());
-        return gameProgress;
+
+        return game.showProgress();
     }
 
     public Game getGameById(Long gameId) throws EntityNotFoundException {
         return gameRepository.findById(gameId).orElseThrow(() -> new EntityNotFoundException("No game found with id: " + gameId));
+    }
+
+    private String getNewWord(Game game){
+        return wordService.provideRandomWord(game.provideNewWordLength());
     }
 }

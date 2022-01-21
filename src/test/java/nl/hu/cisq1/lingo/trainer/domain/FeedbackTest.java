@@ -12,6 +12,7 @@ import java.util.Arrays;
 import java.util.List;
 import java.util.stream.Stream;
 
+import static nl.hu.cisq1.lingo.trainer.domain.Mark.*;
 import static org.junit.jupiter.api.Assertions.*;
 
 class FeedbackTest {
@@ -36,9 +37,17 @@ class FeedbackTest {
 
     static Stream<Arguments> provideGuessExamples() {
         return Stream.of(
-                Arguments.of("straat", "stroom", Arrays.asList(Mark.CORRECT, Mark.CORRECT, Mark.CORRECT, Mark.ABSENT, Mark.ABSENT, Mark.ABSENT)),
-                Arguments.of("kelder", "lelijk", Arrays.asList(Mark.PRESENT, Mark.CORRECT, Mark.CORRECT, Mark.ABSENT, Mark.ABSENT, Mark.PRESENT)),
-                Arguments.of("banaan", "appel", Arrays.asList(Mark.INVALID, Mark.INVALID, Mark.INVALID, Mark.INVALID, Mark.INVALID))
+                Arguments.of("straat", "stroom", Arrays.asList(CORRECT, CORRECT, CORRECT, ABSENT, ABSENT, ABSENT)),
+                Arguments.of("kelder", "lelijk", Arrays.asList(PRESENT, CORRECT, CORRECT, ABSENT, ABSENT, PRESENT)),
+                Arguments.of("banaan", "appel", Arrays.asList(INVALID, INVALID, INVALID, INVALID, INVALID)),
+                Arguments.of("braam", "baard", Arrays.asList(CORRECT, PRESENT, CORRECT, PRESENT, ABSENT)),
+                Arguments.of("braam", "braad", List.of(CORRECT, CORRECT, CORRECT, CORRECT, ABSENT)),
+                Arguments.of("braam", "vroom", List.of(ABSENT, CORRECT, ABSENT, ABSENT, CORRECT)),
+                Arguments.of("braam", "baard", List.of(CORRECT, PRESENT, CORRECT, PRESENT, ABSENT)),
+                Arguments.of("baard", "braam", List.of(CORRECT, PRESENT, CORRECT, PRESENT, ABSENT)),
+                Arguments.of("baard", "bedde", List.of(CORRECT, ABSENT, PRESENT, ABSENT, ABSENT)),
+                Arguments.of("baard", "bonje", List.of(CORRECT, ABSENT, ABSENT, ABSENT, ABSENT)),
+                Arguments.of("baard", "barst", List.of(CORRECT, CORRECT, PRESENT, ABSENT, ABSENT))
         );
     }
 
@@ -53,9 +62,9 @@ class FeedbackTest {
 
     static Stream<Arguments> provideIncorrectGuessExamples() {
         return Stream.of(
-                Arguments.of("straat", "stroom", Arrays.asList(Mark.CORRECT, Mark.CORRECT, Mark.PRESENT, Mark.ABSENT, Mark.ABSENT, Mark.ABSENT)),
-                Arguments.of("kelder", "lelijk", Arrays.asList(Mark.PRESENT, Mark.CORRECT, Mark.CORRECT, Mark.ABSENT, Mark.ABSENT, Mark.ABSENT)),
-                Arguments.of("banaan", "appel", Arrays.asList(Mark.PRESENT, Mark.ABSENT, Mark.ABSENT, Mark.ABSENT, Mark.ABSENT))
+                Arguments.of("straat", "stroom", Arrays.asList(CORRECT, CORRECT, PRESENT, ABSENT, ABSENT, ABSENT)),
+                Arguments.of("kelder", "lelijk", Arrays.asList(PRESENT, CORRECT, CORRECT, ABSENT, ABSENT, ABSENT)),
+                Arguments.of("banaan", "appel", Arrays.asList(PRESENT, ABSENT, ABSENT, ABSENT, ABSENT))
         );
     }
 

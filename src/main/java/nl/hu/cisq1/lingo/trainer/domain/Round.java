@@ -1,6 +1,7 @@
 package nl.hu.cisq1.lingo.trainer.domain;
 
 import org.hibernate.annotations.Cascade;
+import org.hibernate.annotations.ManyToAny;
 
 import javax.persistence.*;
 import java.util.ArrayList;
@@ -10,19 +11,18 @@ import java.util.List;
 
 @Entity
 public class Round {
+    @Id
+    @GeneratedValue
+    private Long id;
+
     private String wordToGuess;
 
     private int attempts;
 
-    @OneToMany
+    @OneToMany(fetch = FetchType.EAGER)
     @Cascade(org.hibernate.annotations.CascadeType.ALL)
     @JoinColumn
-    @OrderBy(value = "id DESC")
     private List<Feedback> feedbackHistory;
-
-    @Id
-    @GeneratedValue(strategy = GenerationType.SEQUENCE)
-    private Long id;
 
     public Round(String wordToGuess) {
         this.wordToGuess = wordToGuess;

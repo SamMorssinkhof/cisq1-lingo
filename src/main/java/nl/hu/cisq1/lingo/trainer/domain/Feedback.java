@@ -2,17 +2,18 @@ package nl.hu.cisq1.lingo.trainer.domain;
 
 import javax.persistence.*;
 import java.util.*;
+import java.util.stream.Collectors;
 
 @Entity
 public class Feedback {
+    @Id
+    @GeneratedValue
+    private  Long id;
+
     private String attempt;
 
     @ElementCollection
     private List<Mark> marks;
-
-    @Id
-    @GeneratedValue(strategy = GenerationType.SEQUENCE)
-    private  Long id;
 
     public Feedback(String attempt) {
         this.attempt = attempt;
@@ -35,18 +36,35 @@ public class Feedback {
     }
 
     public void markGuessAttempt(String wordToGuess) {
-        if (attempt.length() == wordToGuess.length()) {
-            for (int i = 0; i < wordToGuess.length(); i++) {
-                if (attempt.charAt(i) == wordToGuess.charAt(i)) {
-                    marks.add(i, Mark.CORRECT);
-                } else if (wordToGuess.indexOf(attempt.charAt(i)) != -1) {
-                    marks.add(i, Mark.PRESENT);
-                } else {
-                    marks.add(i, Mark.ABSENT);
+        if (attempt.length() != wordToGuess.length()) {
+            marks.addAll(Collections.nCopies(attempt.length(), Mark.INVALID));
+            return;
+        }
+
+        List<Character> wordToGuessCharList = wordToGuess.chars()
+                .mapToObj(e->(char)e).collect(Collectors.toList());
+
+        for (int i = 0; i < wordToGuess.length(); i++) {
+
+            if (attempt.charAt(i) == wordToGuess.charAt(i)) {
+                marks.add(i, Mark.CORRECT);
+                continue;
+            }
+
+            boolean contains = false;
+            for (int x = 0; x < wordToGuessCharList.size(); x++) {
+                if (wordToGuessCharList.get(x) == attempt.charAt(i)) {
+                    contains = true;
+                    wordToGuessCharList.remove(x);
+                    break;
                 }
             }
-        } else {
-            marks.addAll(Collections.nCopies(attempt.length(), Mark.INVALID));
+            if(contains){
+                marks.add(i, Mark.PRESENT);
+            } else {
+                marks.add(i, Mark.ABSENT);
+            }
+
         }
     }
 

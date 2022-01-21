@@ -19,62 +19,45 @@ import static org.junit.jupiter.api.Assertions.*;
 import static org.mockito.Mockito.*;
 
 class TrainerServiceTest {
-//    private TrainerService trainerService;
-//    private WordService wordService;
-//    private SpringGameRepository gameRepository;
-
-//    @BeforeEach
-//    void setUp() throws IOException {
-//        wordService = mock(WordService.class);
-//        gameRepository = mock(SpringGameRepository.class);
-//        trainerService = new TrainerService(wordService, gameRepository);
-//    }
 
     @Test
     @DisplayName("Starts a new game and a new round")
-    void startNewGame() throws PlayerIsEliminatedException, CurrentRoundIsNotFinishedException {
+    void startNewGame() {
         WordService wordService = mock(WordService.class);
         when(wordService.provideRandomWord(5)).thenReturn("skunk");
 
-        Game game = new Game();
         SpringGameRepository gameRepository = mock(SpringGameRepository.class);
-        when(gameRepository.save(any())).thenReturn(game);
+        when(gameRepository.save(any())).thenAnswer(i -> i.getArgument(0));
 
         TrainerService trainerService = new TrainerService(wordService, gameRepository);
 
-        game.setId((long)1);
         GameProgress gameProgress = trainerService.startNewGame();
 
         assertEquals(List.of('s', '.', '.', '.', '.'), gameProgress.getHint());
         assertEquals(GameState.PLAYING, gameProgress.getGameState());
     }
 
-//    @Test
-//    @DisplayName("game score is one after the word has been correctly guessed")
-//    void gameScoreIsOne() throws PlayerIsEliminatedException, CurrentRoundIsNotFinishedException {
-//        WordService wordService = mock(WordService.class);
-//        when(wordService.provideRandomWord(6))
-//                .thenReturn("hoeden");
-//
-//        // Setup a fake game to return from the
-//        // mocked SpringGameRepository (WORD_EXISTS gives true when called)
-//        Game game = new Game();
-//        game.setId(0L);
-//        game.startNewRound("hoeden");
-//        game.attemptWordGuess("hoeden");
-//
-//        SpringGameRepository repository = mock(SpringGameRepository.class);
-//        when(repository.findById(anyLong()))
-//                .thenReturn(Optional.of(game));
-//
-//        TrainerService trainerService = new TrainerService(wordService, repository);
-//        GameProgress progress = trainerService.startNewRound(0L);
-//
-//        assertEquals(1, progress.getScore());
-//        assertEquals(GameState.WAITING_FOR_ROUND, progress.getGameState());
-//    }
+    @Test
+    @DisplayName("guesses a word correctly, gains points")
+    void guessWord(){
+        WordService wordService = mock(WordService.class);
+        when(wordService.provideRandomWord(5)).thenReturn("skunk");
 
+        SpringGameRepository gameRepository = mock(SpringGameRepository.class);
 
+        TrainerService trainerService = new TrainerService(wordService, gameRepository);
 
+        Game game = new Game();
+        game.startNewRound("skunk");
 
+        when(gameRepository.findById(any())).thenReturn(Optional.of(game));
+
+        when(gameRepository.save(any())).thenAnswer(i -> i.getArgument(0));
+
+        GameProgress gameProgress = trainerService.guess(0L, "skunk");
+
+        assertEquals(1, gameProgress.getScore());
+        assertEquals(GameState.WAITING_FOR_ROUND, gameProgress.getGameState());
+        assertEquals(1, gameProgress.getFeedbackHistory().size());
+    }
 }

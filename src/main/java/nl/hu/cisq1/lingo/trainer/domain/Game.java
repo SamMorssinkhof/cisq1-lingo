@@ -4,6 +4,8 @@ import nl.hu.cisq1.lingo.trainer.domain.exceptions.CurrentRoundIsNotFinishedExce
 import nl.hu.cisq1.lingo.trainer.domain.exceptions.PlayerIsEliminatedException;
 import org.hibernate.annotations.Cascade;
 import org.hibernate.annotations.CascadeType;
+import org.hibernate.annotations.Fetch;
+import org.hibernate.annotations.FetchMode;
 
 import javax.persistence.*;
 import java.util.ArrayList;
@@ -11,11 +13,13 @@ import java.util.List;
 
 @Entity
 public class Game {
+    @Id
+    @GeneratedValue
+    private Long id;
 
-    @OneToMany
+    @OneToMany(fetch = FetchType.EAGER)
     @Cascade(CascadeType.ALL)
     @JoinColumn
-    @OrderBy(value = "id DESC")
     private List<Round> rounds;
 
     private int score;
@@ -23,8 +27,8 @@ public class Game {
     @Enumerated(EnumType.STRING)
     private GameState gameState;
 
-    @Id
-    private Long id;
+    private static final int MAX_ATTEMPTS = 5;
+
 
     public Game() {
         this.rounds = new ArrayList<>();
@@ -46,19 +50,21 @@ public class Game {
     }
 
     public void attemptWordGuess(String guessAttempt) throws PlayerIsEliminatedException {
-        getCurrentRound().giveFeedback(guessAttempt);
-        if (getCurrentRound().getAttempts() < 6) {
-            if(getCurrentRound().isWordGuessed()){
-                score += 1;
-                gameState = GameState.WAITING_FOR_ROUND;
-            } else if (getCurrentRound().getAttempts() == 5){
-                gameState = GameState.ELIMINATED;
-            } else {
-                gameState = GameState.PLAYING;
-            }
-        } else {
+        if (getCurrentRound().getAttempts() >= MAX_ATTEMPTS) {
             throw new PlayerIsEliminatedException();
         }
+
+        getCurrentRound().giveFeedback(guessAttempt);
+
+        if (getCurrentRound().isWordGuessed()) {
+            score += 1;
+            gameState = GameState.WAITING_FOR_ROUND;
+        } else if (getCurrentRound().getAttempts() == 5) {
+            gameState = GameState.ELIMINATED;
+        } else {
+            gameState = GameState.PLAYING;
+        }
+
     }
 
     public Round getCurrentRound(){
@@ -80,7 +86,7 @@ public class Game {
     }
 
     public GameProgress showProgress(){
-        return new GameProgress(this.score, this.gameState, getCurrentRound().getFeedbackHistory(), getCurrentRound().giveHint());
+        return new GameProgress(this.id, this.score, this.gameState, getCurrentRound().getFeedbackHistory(), getCurrentRound().giveHint());
     }
 
     public void setId(Long id) {
